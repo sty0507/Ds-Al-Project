@@ -8,7 +8,12 @@ struct Person{
 	char li[2];
 	char f[5];
 };
-
+//음식 주문을 하면 쌓아놓기
+//다 차면 주문 불가(4칸) 
+//음식 가져가기 메뉴 추가(음식 주문 기록을 약간 변형->1. n번자리에서 --을 주문했습니다. 2. n+m번자리에서 --을 주문했습니다. 등등) 
+//음식 나가는 순서 
+//가져가기 메뉴를 통해 넘어가서 제일 첫번째 사람의 음식이 아니면 안줌. 
+ 
 char a[10];
 int k = 0; 
 
@@ -23,6 +28,7 @@ int main(){
    	int n;
 	Reset1(a);
 	Reset2(a);
+	Reset3(a);
 	printf("PC방 프로그램(made by 서태영, 정승민)\n");
 	printf("\n");
    	while(1){
@@ -44,6 +50,7 @@ int main(){
 	     	    	break;
 	      		case 5:
 	         		Food_list(a);
+	         		break;
 	         	case 6:
 	         		return 0;
 	   }
@@ -100,7 +107,13 @@ void Reset2(struct Person r[]){
 	}
 	return;
 }
-
+void Reset3(struct Person r[]){
+	int i;
+	for(i=0; i<10; i++){
+		strcpy(r[i].f, "0");
+	}
+	return;
+}
 void Show(struct Person r[]){
    	int j;
 	for(j=0; j<10; j++){
@@ -153,49 +166,41 @@ void Food(struct Person r[]){
 }
 void Food_list(struct Person r[]){
 	int n, s, i;
-	printf("전체(1) OR 특정자리(2)\n");
+	printf("1.전체  OR 2.특정자리\n");
 	scanf("%d", &n);
-	switch(n){
+	do{
+		switch(n){
 		case 1:
 			for(i=0; i<10; i++){
-				if(r[i].f=="1"){
-					printf("%d번 자리에서는 라면을 주문했습니다.\n", i);
-					continue;
-				}
-				else if(r[i].f=="2"){
-					printf("%d번 자리에서는 음료를 주문했습니다.\n", i);
-					continue;
-				}
-				else if(r[i].f=="3"){
-					printf("%d번 자리에서는 과자를 주문했습니다.\n", i);
-					continue;
-				}
+				Food_print(r, i);
 			}
 			return;
 		case 2:
 			printf("자리를 입력하세요\n");
 			scanf("%d", &s);
-			if(r[i].f=="1"){
-				printf("%d번 자리에서는 라면을 주문했습니다.\n", i);
-				break;
-			}
-			else if(r[i].f=="2"){
-				printf("%d번 자리에서는 음료를 주문했습니다.\n", i);
-				break;
-			}
-			else if(r[i].f=="3"){
-				printf("%d번 자리에서는 과자를 주문했습니다.\n", i);
-				break;
-			}
-			else {
-				printf("음식 주문을 안했습니다.\n");	
-				break;
-			}	
-			return;	
-	}
-	
+			Food_print(r,s-1); 
+			return;
+		}
+	}while(1);
 }
-
+void Food_print(struct Person r[], int i){
+	if(r[i].f=="1"){
+		printf("%d번 자리에서는 라면을 주문했습니다.\n", i+1);
+		return;
+	}
+	else if(r[i].f=="2"){
+		printf("%d번 자리에서는 음료를 주문했습니다.\n", i+1);
+		return;
+	}
+	else if(r[i].f=="3"){
+		printf("%d번 자리에서는 과자를 주문했습니다.\n", i+1);
+		return;
+	}
+	else{
+		printf("%d번 자리는 음식을 주문하지 않았습니다.\n", i+1);
+		return;
+	}
+}
 
 
 
