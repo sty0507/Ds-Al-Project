@@ -3,15 +3,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
 typedef char ELEMENT;
-
 typedef struct Person{
    char name[10];
    char li[2];
    char f[5];
 }P;
-
+//음식 주문을 하면 쌓아놓기
+//다 차면 주문 불가(4칸) 
+//음식 가져가기 메뉴 추가(음식 주문 기록을 약간 변형->1. n번자리에서 --을 주문했습니다. 2. n+m번자리에서 --을 주문했습니다. 등등) 
+//음식 나가는 순서 
+//가져가기 메뉴를 통해 넘어가서 제일 첫번째 사람의 음식이 아니면 안줌. 
 typedef struct reservation{
    ELEMENT * buf;
    int front;
@@ -24,7 +26,7 @@ int k = 0;
 
 void Register(P r[], Q q[]);
 void Show(P r[]);
-void Out(P r[] ,Q q[]);
+void Out(P r[]);
 void Reset(P r[]);
 void Food_list(P r[]);
 void Food(P r[]);
@@ -38,19 +40,19 @@ void destroyQueue( Q * q );
 void printAll( Q *q );
 
 int main(){
-     Q *q;
-     q = createQueue(10);
-      int n;
-   Reset1(a);
-   Reset2(a);
-   Reset3(a);
-   printf("PC방 프로그램(made by 서태영, 정승민)\n");
-   printf("\n");
-      while(1){
-         printf("1. 등록 2. 자리보기 3. 자리해제 4. 예약현황 5. 음식주문 6. 음식 주문 기록 7. 규칙 정하기 8. 규칙 보기 0.프로그램 종료\n");
-         n = 0;
-         scanf("%d", &n);
-           switch(n){
+    Q *q;
+    q = createQueue(10);
+    int n;
+   	Reset1(a);
+   	Reset2(a);
+   	Reset3(a);
+   	printf("PC방 프로그램(made by 서태영, 정승민)\n");
+   	printf("\n");
+      	while(1){
+        	 printf("1. 등록 2. 자리보기 3. 자리해제 4. 예약현황 5. 음식주문 6. 음식 주문 기록 7. 규칙 정하기 8. 규칙 보기 9.프로그램 종료\n");
+         	n = 0;
+         	scanf("%d", &n);
+           	switch(n){
                case 1:
                   Register(a,q);
                   break;
@@ -58,11 +60,11 @@ int main(){
                   Show(a);
                   break;
                case 3:
-                  Out(a,q);
-                  break;
+                  Out(a);
+                  	break;
                case 4:
                  printAll(q);
-              break; 
+              		break; 
                case 5:
                   Food(a);
                   break;
@@ -75,8 +77,8 @@ int main(){
                case 8:
                   RuleShow();
                   break;
-               case 0:
-                  printf("저희 PC방을 이용해 주셔서 감사합니다. 안녕히가십시오.");
+               case 9:
+                  printf("종료됩니다");
                   return 0;
                 default:
                    printf("잘못된 입력입니다.\n");
@@ -84,16 +86,10 @@ int main(){
       }
    }
 }
-
 void printAll( Q *q ){
    int i;
-   if(isEmpty(q)){
-      printf("예약된 손님이 없습니다.");
-   }
-   else{
-      for(i = q -> front+1; i <= q -> rear; i++)
-      printf("%d님\n", q -> buf[i]);
-   }
+   for(i = q -> front+1; i <= q -> rear; i++)
+      printf("%d ", q -> buf[i]);
 }
 
 Q * createQueue( int n ){
@@ -106,27 +102,28 @@ Q * createQueue( int n ){
 }
 
 void enQueue( Q *q, ELEMENT data ){
-   if(QueueisFull(q))
-   {
+	int f = 0;
+	f = QueueisFull(q);
+	printf("%d", f);
+   	if(f == 1){
+   	  (q -> rear)++;
+	  q -> buf[(q -> rear)] = data;
+      printf("%s님이 예약되었습니다.\n",data);
+      return;
+      
+   	}
+   	else
+   	{	
       printf("예약이 가득 찼습니다.\n");
       return;
-   }
-   else
-   {
-      q -> buf[++q -> rear] = data;
-      printf("%s님이 예약되었습니다.\n",data);
-      return; 
-   }
+   	}
 }
 
 int QueueisFull( Q *q ){
-   if(q -> rear == q -> size-1){
-      return 1;
-   }
-   else{
-      //여기로 넘어가긴 함 근데 왜 꺼질까 
-      return -1;
-   }
+   	if((q -> rear) == (q -> size)-1)
+      	return -1;
+   	else
+      	return 1;
 }
 
 void Register(P r[], Q q[]){
@@ -134,10 +131,10 @@ void Register(P r[], Q q[]){
       char name[20];
      if(isfull(r)){
          printf("모든 자리에 사람이 있습니다. 예약하시겠습니까? 1 = Yes / 2 = No ");
-         scanf("%d",&yn);
+         scanf("%d", &yn);
        if(yn == 1){
-          printf("이름을 입력하세요(띄어쓰기 금지, 글자만)\n");
-           scanf("%s", &name);
+          	printf("이름을 입력하세요(띄어쓰기 금지, 글자만)\n");
+           	scanf("%s", &name);
             enQueue(q,name);
             return;   
        }
@@ -152,10 +149,6 @@ void Register(P r[], Q q[]){
      }
       printf("자리를 입력하세요(숫자만)\n");
       scanf("%d", &desk);
-     if(desk==0  || desk >10){
-         printf("잘못된 입력입니다.\n");
-         return;
-      }
       int result = Search(desk, r); 
       if(result==1){
          printf("이미 %02d번자리에는 사람이 있습니다.\n", desk);
@@ -163,6 +156,13 @@ void Register(P r[], Q q[]){
       }
       printf("이름을 입력하세요(띄어쓰기 금지, 글자만)\n");
       scanf("%s", &name);
+      
+      
+      //에러 확인 코드 
+      if(desk==0  || desk >10){
+         printf("잘못된 입력입니다.\n");
+         return;
+      }
    
       //기존에 자리에 사람이 있는지 비교
       
@@ -179,7 +179,6 @@ void Register(P r[], Q q[]){
       return;
     }
 }
-
 int isfull(P r[]){
    int i;
    for(i=0; i<10; i++){
@@ -189,8 +188,27 @@ int isfull(P r[]){
    }
    return 1;
 }
-
-
+void Reset1(P r[]){
+   int i;
+   for(i=0; i<10; i++){
+      strcpy(r[i].li, "0");
+   }
+   return;
+}
+void Reset2(P r[]){
+   int i;
+   for(i=0; i<10; i++){
+      strcpy(r[i].name, " ");
+   }
+   return;
+}
+void Reset3(P r[]){
+   int i;
+   for(i=0; i<10; i++){
+      strcpy(r[i].f, "0");
+   }
+   return;
+}
 void Show(P r[]){
       int j;
    for(j=0; j<10; j++){
@@ -198,29 +216,15 @@ void Show(P r[]){
    }
 }
 
-int isEmpty( Q *q ){
-   if(q -> rear == q -> front)
-      return 1;
-   else
-      return 0;
-}
-
-ELEMENT deQueue( Q *q ){
-   return q -> buf[++q->front]; 
-}
-
-void Out(P r[],Q q[]){
-   int s, result = 0;
-   printf("자리를 입력해주세요.\n");
-   scanf("%d", &s);
+void Out(P r[]){
+   	int s, result = 0;
+  	printf("자리를 입력해주세요.\n");
+   	scanf("%d", &s);
     result = Search(s, r);
     if(result == 1){
-       printf("%s손님, 안녕히가십시오.\n",r[s-1].name); 
        strcpy(r[s-1].name, " ");
          strcpy(r[s-1].li, "0");
-         if(!(isEmpty(q))){
-            printf("예약 손님 %s님이 들어오셨습니다.\n",deQueue(q));
-       }
+         printf("성공적으로 해제가 되었습니다.\n");
          return;
    }
    else{
@@ -230,16 +234,12 @@ void Out(P r[],Q q[]){
     
 }
 
-void destroyQueue( Q * q ){
-   free(q -> buf);
-   free(q);
-}
-
 int Search(int d, P r[]){
       if(*(r[d-1].li)=='1')
          return 1;
       else return -1;
 }
+
 
 void Food(P r[]){
    do{
@@ -268,8 +268,8 @@ void Food(P r[]){
             return;
       }
    }while(1);
+   
 }
-
 void Food_list(P r[]){
    int n, s, i;
    printf("1.전체  OR 2.특정자리\n");
@@ -289,7 +289,6 @@ void Food_list(P r[]){
       }
    }while(1);
 }
-
 void Food_print(struct Person r[], int i){
    if(*(r[i].f)=='1'){
       printf("%02d번 자리에서는 라면을 주문했습니다.\n", i+1);
@@ -308,7 +307,6 @@ void Food_print(struct Person r[], int i){
       return;
    }
 }
-
 void Rule(){
    FILE* fp;
     char rule[1000], enter;
@@ -327,7 +325,6 @@ void Rule(){
    printf("가 입력되었습니다.\n");
     fclose(fp);
 }
-
 void RuleShow(){
    FILE *fp;
    char* pChar;
